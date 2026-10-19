@@ -1,0 +1,54 @@
+# Place at: PeekESP/.github/workflows/publish-homeassistant.yml
+#
+# Mirrors PeekESP/HomeAssistant/ to rhshourav/hass-peekesp, because HACS only
+# understands a repository whose root holds custom_components/ and hacs.json.
+#
+# Trigger: push a tag named ha-v<version>, e.g.  git tag ha-v0.1.0 && git push --tags
+# The tag must equal "version" in HomeAssistant/custom_components/peekesp/manifest.json.
+#
+# Needs a secret HASS_PEEKESP_TOKEN: a fine-grained token with Contents (read/write)
+# on rhshourav/hass-peekesp only.
+#
+# Not tested. For the very first submission to hacs/default, do the release by hand
+# after the mirror's own HACS + hassfest workflows have passed on main; HACS wants
+# the release created AFTER validation succeeds, and this job releases immediately.
+name: Publish Home Assistant integration
+
+on:
+  push:
+    tags: ["ha-v*"]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Mirror and release
+        env:
+          TOKEN: ${{ secrets.HASS_PEEKESP_TOKEN }}
+          GH_TOKEN: ${{ secrets.HASS_PEEKESP_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          tag_version="${GITHUB_REF_NAME#ha-v}"
+          manifest_version="$(jq -r .version HomeAssistant/custom_components/peekesp/manifest.json)"
+          if [ "$tag_version" != "$manifest_version" ]; then
+            echo "Tag says $tag_version but manifest.json says $manifest_version" >&2
+            exit 1
+          fi
+
+          git clone "https://x-access-token:${TOKEN}@github.com/rhshourav/hass-peekesp.git" mirror
+          rsync -a --delete --exclude '.git' HomeAssistant/ mirror/
+
+          cd mirror
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Sync from PeekESP ${GITHUB_REF_NAME}" || echo "Nothing changed"
+          git push origin HEAD:main
+
+          gh release create "v${manifest_version}" \
+            --repo rhshourav/hass-peekesp \
+            --title "v${manifest_version}" \
+            --generate-notes
