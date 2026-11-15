@@ -10,13 +10,23 @@ def load(name):
     mod = importlib.util.module_from_spec(spec); sys.modules[name] = mod
     spec.loader.exec_module(mod); return mod
 
-pairing, api = load("pairing"), load("api")
+pairing, api, const = load("pairing"), load("api"), load("const")
 
 def test_pairing_vector():
     # The vector pinned in PeekESP.ino, checked there against openssl.
     stream, token = pairing.derive("K7M2P4QX9R")
     assert stream == "4b907ba136d0a7f2"
     assert token == "ec3cb3699bd1284efb2fcfe056609e87edf4813b84e9ce84"
+
+def test_default_relay():
+    # The config flow builds f"{base}/telemetry/{stream}", so no trailing slash.
+    assert const.DEFAULT_RELAY_BASE == "https://peek-relay-b9a8.onrender.com"
+
+def test_versions_agree():
+    # The publish workflow tags from manifest.json; the card logs its own constant.
+    manifest = json.loads((PKG / "manifest.json").read_text())["version"]
+    card = (PKG / "frontend" / "peekesp-card.js").read_text()
+    assert f'const VERSION = "{manifest}";' in card, "card VERSION and manifest.json differ"
 
 def test_code_normalisation():
     assert pairing.normalize_code("k7m2-p4qx-9r") == "K7M2P4QX9R"

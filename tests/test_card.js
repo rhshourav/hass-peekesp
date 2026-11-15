@@ -31,6 +31,17 @@ assert.match(card.shadowRoot.querySelector(".glass").textContent, /was not found
 card.hass = { states: { "sensor.dietpi_screen": { state: "online", attributes: { ...attrs, fetched_at: 3 } } } };
 assert.equal(txt("state"), "LINK OK");                       // screen rebuilt after the message
 
+// the entity id is card config, i.e. user text: the not-found message must show it, never parse it
+const evil = w.document.createElement("peekesp-card"); w.document.body.appendChild(evil);
+const payload = '<img src=x onerror="window.__pwned=1"><script>window.__pwned=1</script>';
+evil.setConfig({ entity: payload }); evil.hass = { states: {} };
+const evilGlass = evil.shadowRoot.querySelector(".glass");
+assert.equal(evilGlass.querySelector("b").textContent, payload);          // shown literally
+assert.equal(evilGlass.querySelector("img, script"), null);               // nothing parsed out of it
+assert.equal(evilGlass.querySelectorAll("*").length, 2);                  // only div.msg and b
+assert.match(evilGlass.textContent, /^Entity .* was not found\.$/s);
+evil.disconnectedCallback();
+
 // click opens more-info
 let got = null; card.addEventListener("hass-more-info", e => (got = e.detail.entityId));
 card.shadowRoot.querySelector(".bezel").click(); assert.equal(got, "sensor.dietpi_screen");

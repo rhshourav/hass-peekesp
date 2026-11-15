@@ -12,7 +12,7 @@
  *   entity: sensor.dietpi_screen
  *   name: optional label shown after "//"
  */
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 
 const C = {
   bg: "#05070E", panel: "#0B1220", track: "#1A2334",
@@ -315,7 +315,14 @@ class PeekESPCard extends HTMLElement {
       // The entity can appear later (integration still loading), so remember
       // that the screen was replaced and rebuild it when the entity shows up.
       this._replaced = true;
-      this.shadowRoot.querySelector(".glass").innerHTML = `<div class="msg">Entity <b>${this._config.entity}</b> was not found.</div>`;
+      // The entity id is card config, i.e. user text: build the message from
+      // nodes so it is displayed, never parsed as markup.
+      const msg = document.createElement("div");
+      msg.className = "msg";
+      const name = document.createElement("b");
+      name.textContent = this._config.entity;
+      msg.append("Entity ", name, " was not found.");
+      this.shadowRoot.querySelector(".glass").replaceChildren(msg);
       return;
     }
     if (this._replaced) { this._replaced = false; this._build(); }

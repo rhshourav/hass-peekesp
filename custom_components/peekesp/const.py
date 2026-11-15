@@ -2,8 +2,9 @@
 
 DOMAIN = "peekesp"
 
-# Where a freshly flashed device looks unless told otherwise (PeekESP.ino).
-DEFAULT_RELAY_BASE = "https://peek-relay.peekesp.workers.dev"
+# Relay offered in the pairing form. No trailing slash: the config flow appends
+# /telemetry/<stream>. It must be the relay the device itself is pointed at.
+DEFAULT_RELAY_BASE = "https://peek-relay-b9a8.onrender.com"
 
 CONF_URL = "url"
 CONF_TOKEN = "token"

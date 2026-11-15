@@ -28,7 +28,9 @@ async def _register_card(hass: HomeAssistant) -> None:
         [StaticPathConfig(CARD_URL, str(path), cache_headers=False)]
     )
     # Cache-bust on file change rather than on a version nobody remembers to bump.
-    add_extra_js_url(hass, f"{CARD_URL}?m={int(path.stat().st_mtime)}")
+    # stat() is file I/O, so it runs in the executor, not on the event loop.
+    mtime = (await hass.async_add_executor_job(path.stat)).st_mtime
+    add_extra_js_url(hass, f"{CARD_URL}?m={int(mtime)}")
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

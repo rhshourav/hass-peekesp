@@ -100,4 +100,4 @@ unavailable / missing; the card's rendering, rasterised outside a browser.
 
 **Not verified: running inside a real Home Assistant.** The integration
 compiles and follows current APIs (2025.1+), but no HA instance was available,
-and the card has not been seen in a real browser. Treat 0.1.0 accordingly.
+and the card has not been seen in a real browser. Treat 0.1.1 accordingly.
