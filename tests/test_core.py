@@ -96,6 +96,30 @@ def test_client_against_fake_relay():
             except api.PeekConnectionError: pass
     asyncio.run(run())
 
+def test_client_logs_what_the_relay_said_but_never_secrets():
+    # "success: True" alone cannot tell a 503 (nothing pushed yet) from real data.
+    import logging
+    lines = []
+    class H(logging.Handler):
+        def emit(self, rec): lines.append(rec.getMessage())
+    log = logging.getLogger(api.__name__); h = H(); log.addHandler(h); log.setLevel(logging.DEBUG)
+    async def handler(req):
+        if req.app.get("mode") == "503": return web.Response(status=503)
+        return web.json_response({"devices": [{"host": "desk", "cpu_percent": 9}]})
+    async def run():
+        runner, url = await _serve(handler)
+        async with aiohttp.ClientSession() as sess:
+            c = api.PeekRelayClient(sess, url, "SECRET-TOKEN")
+            await c.fetch()
+            runner.app["mode"] = "503"; await c.fetch()
+            await runner.cleanup()
+    try: asyncio.run(run())
+    finally: log.removeHandler(h)
+    assert any("answered 200" in l and "['desk']" in l for l in lines), lines
+    assert any("answered 503" in l and "no telemetry" in l for l in lines), lines
+    joined = " ".join(lines)
+    assert "SECRET-TOKEN" not in joined and "/telemetry/abc" not in joined and "abc" not in joined.replace("answered", "")
+
 if __name__ == "__main__":
     for n, f in list(globals().items()):
         if n.startswith("test_"): f(); print("ok ", n)
