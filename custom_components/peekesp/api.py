@@ -7,15 +7,19 @@ either {"devices": [ {...}, ... ]} or, from an older relay, one flat object.
 """
 from __future__ import annotations
 
+import logging
 import time
 from dataclasses import dataclass, field
 from typing import Any
+from urllib.parse import urlsplit
 
 import aiohttp
 
 # Cloudflare's edge rejects some generic client user agents with error 1010
 # before the Worker runs, which looks like an opaque 403. The firmware sends a
 # custom one for the same reason.
+_LOGGER = logging.getLogger(__name__)
+
 USER_AGENT = "PeekESP-HA/0.1"
 MAX_DEVICES = 6  # the relay's own cap, mirrored from the firmware
 
@@ -129,6 +133,8 @@ class PeekRelayClient:
         self._session = session
         self._url = url
         self._token = token
+        # Host only: the path holds the stream id and must never reach a log.
+        self.host = urlsplit(url).netloc
 
     async def fetch(self) -> RelayData:
         t0 = time.monotonic()
@@ -145,6 +151,7 @@ class PeekRelayClient:
                 if resp.status in (401, 403, 404):
                     raise PeekAuthError(f"relay answered {resp.status}")
                 if resp.status == 503:
+                    _LOGGER.debug("%s answered 503: no telemetry stored for this stream yet", self.host)
                     # Worker is up, the host has not pushed anything yet. That
                     # is a valid state, not an outage - the device treats it
                     # the same way (see fetch_relay in the firmware).
@@ -156,6 +163,7 @@ class PeekRelayClient:
             raise PeekConnectionError(str(err) or type(err).__name__) from err
 
         machines, fw = parse_payload(doc)
+        _LOGGER.debug("%s answered 200 in %d ms: machines=%s", self.host, _ms(t0), sorted(machines))
         return RelayData(
             machines=machines,
             latest_fw=fw,
