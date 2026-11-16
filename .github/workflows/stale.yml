@@ -1,0 +1,72 @@
+name: Stale
+
+# Two passes, so they never fight over the same issue:
+#   1. needs-info: the reporter went quiet. Warn after 7 days, close after 7 more.
+#   2. Everything else: warn after 90 days of silence, close after 14 more.
+# Anything labelled pinned / security / confirmed / help wanted is left alone.
+# A reply from anyone removes the stale label again.
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Log what would happen without changing anything"
+        type: boolean
+        default: false
+
+permissions: {}
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Waiting on the reporter
+        uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          debug-only: ${{ inputs.dry-run == true }}
+          only-issue-labels: needs-info
+          days-before-issue-stale: 7
+          days-before-issue-close: 7
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-label: stale
+          close-issue-reason: not_planned
+          exempt-issue-labels: pinned,security
+          stale-issue-message: >
+            This is waiting on details from the reporter and has been quiet for a week.
+            If there is no reply in the next 7 days it will be closed. Replying here
+            keeps it open, and you can reopen it at any time.
+          close-issue-message: >
+            Closing because the requested details did not arrive. Reopen it with the
+            information and it will be picked up again.
+
+      - name: Everything else
+        uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          debug-only: ${{ inputs.dry-run == true }}
+          days-before-issue-stale: 90
+          days-before-issue-close: 14
+          days-before-pr-stale: 30
+          days-before-pr-close: 14
+          stale-issue-label: stale
+          stale-pr-label: stale
+          close-issue-reason: not_planned
+          exempt-draft-pr: true
+          exempt-issue-labels: needs-info,pinned,security,confirmed,help wanted,good first issue
+          exempt-pr-labels: pinned,security
+          stale-issue-message: >
+            There has been no activity here for 90 days. It will be closed in 14 days
+            unless something new is added. If this still matters, a comment is enough.
+          close-issue-message: >
+            Closing for lack of activity. Reopen it if it still applies.
+          stale-pr-message: >
+            This pull request has had no activity for 30 days. It will be closed in 14
+            days unless it is updated.
+          close-pr-message: >
+            Closing for lack of activity. Feel free to reopen or send a fresh PR.

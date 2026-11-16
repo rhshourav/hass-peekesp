@@ -1,0 +1,42 @@
+name: Question
+description: Help with setup or using the card
+title: "[Question]: "
+labels: ["question", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please read the [README](https://github.com/rhshourav/hass-peekesp#readme) first; it covers
+        install, the card options and what **LINK OK / STALE / NO LINK** mean.
+
+        **Do not paste your pairing code, read token, or a relay URL that ends in a stream ID.**
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Entities and sensors
+        - Setup and pairing
+        - Dashboard card
+        - Relay connection (offline, stale, no link)
+        - Not sure
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried?
+      description: Steps, YAML, or anything you saw. Remove codes and tokens.
+
+  - type: input
+    id: versions
+    attributes:
+      label: PeekESP and Home Assistant versions
+      placeholder: "PeekESP 0.1.1, Home Assistant 2026.11.2"

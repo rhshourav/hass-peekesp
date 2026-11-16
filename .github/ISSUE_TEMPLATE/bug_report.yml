@@ -1,0 +1,113 @@
+name: Bug report
+description: Something in PeekESP is not working in Home Assistant
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this.
+
+        **Do not paste your pairing code, your read token, or a relay URL that ends in a stream ID.**
+        Anyone who has them can read that machine's live stats. The bot removes what it recognises,
+        but the original text stays in the issue's edit history.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched the existing issues and this is not already reported.
+          required: true
+        - label: I removed pairing codes, tokens and stream IDs from everything below.
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Where does the problem show up?
+      options:
+        - Entities and sensors
+        - Setup and pairing
+        - Dashboard card
+        - Relay connection (offline, stale, no link)
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you saw, and what you expected to see instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Settings → Devices & services → Add integration → PeekESP
+        2. ...
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: PeekESP version
+      description: Settings → Devices & services → PeekESP, or `version` in manifest.json.
+      placeholder: "0.1.1"
+    validations:
+      required: true
+
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.11.2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install it?
+      options:
+        - HACS
+        - Manual copy into custom_components
+    validations:
+      required: true
+
+  - type: input
+    id: machine
+    attributes:
+      label: Machine and agent (optional)
+      description: What the reporting machine runs, if it matters.
+      placeholder: "DietPi on a Raspberry Pi 4, relay default"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Needed for sensor, setup and connection problems. Add this to `configuration.yaml`, restart,
+        reproduce the problem, then paste what **Settings → System → Logs** shows (remove any code or
+        token). For card problems, paste the browser console (F12 → Console) instead.
+        If the log really is empty, write "no errors in the log".
+
+        ```yaml
+        logger:
+          default: warning
+          logs:
+            custom_components.peekesp: debug
+        ```
+      render: shell
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot or recording
+      description: Drag an image or video here. Especially useful for the card.

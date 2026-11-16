@@ -1,0 +1,22 @@
+version: 2
+
+# The workflows pin every action to a commit SHA (with the version in a
+# comment). Dependabot bumps both together, one grouped PR a week.
+# The repo has no requirements.txt or package.json, so there is nothing else
+# to watch; add pip / npm blocks here if that changes.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "04:00"
+      timezone: Asia/Dhaka
+    open-pull-requests-limit: 3
+    groups:
+      actions:
+        patterns: ["*"]
+    labels: [dependencies, ci]
+    assignees: [rhshourav]
+    commit-message:
+      prefix: "ci"

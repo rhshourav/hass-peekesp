@@ -1,0 +1,12 @@
+# Used by .github/workflows/lint.yml (`ruff check custom_components`).
+target-version = "py313"
+line-length = 100
+
+[lint]
+# E/F/W pycodestyle + pyflakes, B bugbear, UP pyupgrade, ASYNC blocking calls
+# in async code, S bandit security rules.
+select = ["E", "F", "W", "B", "UP", "S", "ASYNC"]
+
+[lint.per-file-ignores]
+# CONF_TOKEN is the name of a config-entry key, not a secret.
+"custom_components/peekesp/const.py" = ["S105"]

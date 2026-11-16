@@ -1,0 +1,17 @@
+# How GitHub groups the generated release notes (used by workflows/release.yml).
+changelog:
+  exclude:
+    labels:
+      - duplicate
+      - wontfix
+  categories:
+    - title: Bug fixes
+      labels: [bug]
+    - title: New and improved
+      labels: [enhancement]
+    - title: Documentation
+      labels: [documentation]
+    - title: Maintenance
+      labels: [ci, tests, dependencies]
+    - title: Other changes
+      labels: ["*"]

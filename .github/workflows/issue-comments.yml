@@ -1,0 +1,38 @@
+name: Issue comments
+
+# Comments on issues and pull requests: scrub pasted secrets, clear needs-info
+# when the reporter replies, and run slash commands (/assign, /label, ...).
+# Anyone can comment, so privileged commands check the commenter's repository
+# permission inside the script. Comment text is only parsed, never executed.
+# Logic lives in .github/scripts/comments.js (unit tested in lint.yml).
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions: {}
+
+concurrency:
+  group: issue-comments-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  comments:
+    if: github.event.sender.type != 'Bot'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      # Default branch only: this event also fires for PR comments and must
+      # never check out or run the PR's code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github
+          persist-credentials: false
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            await require('./.github/scripts/comments.js')({ github, context, core });

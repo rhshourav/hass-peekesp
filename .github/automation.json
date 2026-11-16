@@ -1,0 +1,30 @@
+{
+  "maintainers": [
+    "rhshourav"
+  ],
+  "labels": {
+    "needsTriage": "needs-triage",
+    "needsInfo": "needs-info",
+    "confirmed": "confirmed",
+    "duplicate": "duplicate",
+    "wontfix": "wontfix",
+    "secretsRedacted": "secrets-redacted",
+    "stale": "stale"
+  },
+  "form": {
+    "areaField": "Area",
+    "evidenceFields": [
+      "Logs",
+      "Screenshot or recording"
+    ]
+  },
+  "areas": {
+    "Entities and sensors": "area: sensors",
+    "Setup and pairing": "area: setup",
+    "Dashboard card": "area: card",
+    "Relay connection (offline, stale, no link)": "area: relay"
+  },
+  "noAreaOptions": [
+    "Not sure"
+  ]
+}

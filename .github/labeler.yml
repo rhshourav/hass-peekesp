@@ -1,0 +1,48 @@
+# Applied to pull requests by .github/workflows/pull-requests.yml
+# (actions/labeler v5+ syntax). Every label named here must exist in labels.json;
+# .github/scripts/test/check_config.py enforces that.
+
+"area: card":
+  - changed-files:
+      - any-glob-to-any-file:
+          - custom_components/peekesp/frontend/**
+          - tests/test_card.js
+          - tests/render_preview.js
+
+"area: setup":
+  - changed-files:
+      - any-glob-to-any-file:
+          - custom_components/peekesp/config_flow.py
+          - custom_components/peekesp/pairing.py
+          - custom_components/peekesp/strings.json
+          - custom_components/peekesp/translations/**
+
+"area: sensors":
+  - changed-files:
+      - any-glob-to-any-file:
+          - custom_components/peekesp/sensor.py
+          - custom_components/peekesp/binary_sensor.py
+          - custom_components/peekesp/entity.py
+          - custom_components/peekesp/coordinator.py
+
+"area: relay":
+  - changed-files:
+      - any-glob-to-any-file:
+          - custom_components/peekesp/api.py
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - LICENSE
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - ruff.toml
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - tests/**

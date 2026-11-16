@@ -1,0 +1,26 @@
+[
+  { "name": "bug", "color": "d73a4a", "description": "Something is not working" },
+  { "name": "enhancement", "color": "a2eeef", "description": "New feature or improvement" },
+  { "name": "question", "color": "d876e3", "description": "Usage or setup question" },
+  { "name": "documentation", "color": "0075ca", "description": "README or other docs" },
+  { "name": "dependencies", "color": "0366d6", "description": "Dependency updates" },
+  { "name": "ci", "color": "ededed", "description": "Workflows and repository automation" },
+  { "name": "tests", "color": "c5def5", "description": "Test changes" },
+
+  { "name": "needs-triage", "color": "fbca04", "description": "New, not yet looked at by a maintainer" },
+  { "name": "needs-info", "color": "fef2c0", "description": "Waiting for details from the reporter" },
+  { "name": "confirmed", "color": "0e8a16", "description": "Reproduced or accepted by a maintainer" },
+  { "name": "duplicate", "color": "cfd3d7", "description": "Already reported elsewhere" },
+  { "name": "wontfix", "color": "ffffff", "description": "Will not be worked on" },
+  { "name": "stale", "color": "ededed", "description": "No activity, will close soon" },
+  { "name": "pinned", "color": "5319e7", "description": "Exempt from the stale bot" },
+  { "name": "security", "color": "b60205", "description": "Security related" },
+  { "name": "secrets-redacted", "color": "e99695", "description": "The bot removed a pairing code or token from this thread" },
+  { "name": "good first issue", "color": "7057ff", "description": "Good for newcomers" },
+  { "name": "help wanted", "color": "008672", "description": "Contributions welcome" },
+
+  { "name": "area: sensors", "color": "1d76db", "description": "Entities, sensors, coordinator" },
+  { "name": "area: setup", "color": "1d76db", "description": "Config flow, pairing, options" },
+  { "name": "area: card", "color": "1d76db", "description": "Lovelace card" },
+  { "name": "area: relay", "color": "1d76db", "description": "Relay client, connectivity, offline and stale states" }
+]

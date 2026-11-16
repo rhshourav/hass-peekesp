@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem (private)
+    url: https://github.com/rhshourav/hass-peekesp/security/advisories/new
+    about: Exposed pairing codes or tokens, or anything that reveals a user's data. Please do not open a public issue for these.
+  - name: Read the README first
+    url: https://github.com/rhshourav/hass-peekesp#readme
+    about: Install steps, card options, and what LINK OK, STALE and NO LINK mean.
