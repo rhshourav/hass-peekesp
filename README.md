@@ -190,16 +190,15 @@ python3 tests/test_core.py        # pairing vector, parsing, client vs a fake re
 node tests/test_card.js           # needs: npm i jsdom
 ```
 
-## What has and has not been verified
+## What has been verified
 
-Verified here: the pairing derivation against the vector pinned in
+**In use:** the integration has been run in a real Home Assistant and works. It
+follows current APIs (2025.1+).
+
+**Automated, in `tests/`:** the pairing derivation against the vector pinned in
 `PeekESP.ino`; payload parsing including the firmware's sentinels; the relay
 client against a fake server; the card's logic across online / stale /
 unavailable / missing; the card's rendering, rasterised outside a browser.
-
-**Not verified: running inside a real Home Assistant.** The integration
-compiles and follows current APIs (2025.1+), but no HA instance was available,
-and the card has not been seen in a real browser. Treat 0.1.1 accordingly.
 
 ## Links
 
