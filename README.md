@@ -19,8 +19,6 @@ It turns your PeekESP machines into Home Assistant entities and adds a Lovelace
 card that draws **the device's own screen** on a dashboard: same palette, same
 layout, same gauges, same load colours, same 500 ms sweep.
 
-![the card in three states: healthy, loaded, stale](preview.png)
-
 It reads the same relay the ESP32 reads, which by default is the public PeekESP
 relay at `https://peek-relay-b9a8.onrender.com`. Nothing is added to the device,
 nothing needs to be opened on your network, and no firmware change is required.
