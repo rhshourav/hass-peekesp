@@ -10,6 +10,7 @@
   <a href="https://rhshourav.github.io/PeekESP/">Website</a> ·
   <a href="https://github.com/rhshourav/PeekESP">Main repository</a> ·
   <a href="https://github.com/rhshourav/PeekESP/wiki">Wiki</a> ·
+  <a href="https://discord.gg/nHtHMmjzRU">Discord</a> ·
   <a href="https://github.com/rhshourav/hass-peekesp/releases/latest">Latest release</a> ·
   <a href="https://github.com/rhshourav/hass-peekesp/issues">Issues</a>
 </p>
@@ -162,12 +163,16 @@ recorder:
 | `NO LINK` for the first poll or two, then fine | The relay was asleep or had just restarted. Nothing to fix. |
 | `STALE` and `offline 3m` | The relay is fine and that machine stopped pushing. Look at the agent or the device. |
 
+Still stuck? Ask in the [PeekESP Discord](https://discord.gg/nHtHMmjzRU) or
+[open an issue](https://github.com/rhshourav/hass-peekesp/issues). Leave your
+pairing code out of both: it is the credential, and both places are public.
+
 ## Security notes
 
 - The pairing code is the credential. Home Assistant stores it with the
   integration's configuration in your config folder, unencrypted like every
   config entry, so treat backups accordingly and do not paste the code into
-  issues or screenshots.
+  issues, Discord or screenshots.
 - Use an `https://` relay address only. The read token is sent in a request
   header.
 - The code lets someone read your readings. It does not let them reach your
@@ -203,4 +208,5 @@ unavailable / missing; the card's rendering, rasterised outside a browser.
 - Website: [rhshourav.github.io/PeekESP](https://rhshourav.github.io/PeekESP/)
 - Main project: [rhshourav/PeekESP](https://github.com/rhshourav/PeekESP) (firmware, agents, relay, Android app)
 - Wiki: [github.com/rhshourav/PeekESP/wiki](https://github.com/rhshourav/PeekESP/wiki)
+- Community: [PeekESP on Discord](https://discord.gg/nHtHMmjzRU)
 - Issues with this integration or the card: [rhshourav/hass-peekesp](https://github.com/rhshourav/hass-peekesp/issues)
