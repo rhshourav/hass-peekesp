@@ -13,6 +13,7 @@ Pinned vector (from the firmware header):
 from __future__ import annotations
 
 import hashlib
+import secrets
 
 # I, O, 0 and 1 are removed: the pairs people mistype off a 1.14" screen.
 ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
@@ -22,6 +23,22 @@ CODE_LEN = 10
 def normalize_code(raw: str) -> str:
     """'k7m2-p4qx-9r' -> 'K7M2P4QX9R' (the screen shows it grouped)."""
     return "".join(ch for ch in raw.upper() if ch not in " -_\t\n")
+
+
+def new_code() -> str:
+    """A fresh random code, the same way the device and peek_pair.py make one.
+
+    32^10 = 2^50 possibilities from the OS CSPRNG. The relay never sees the
+    code, so there is nothing to register: a code exists the moment both ends
+    know it.
+    """
+    return "".join(secrets.choice(ALPHABET) for _ in range(CODE_LEN))
+
+
+def format_code(code: str) -> str:
+    """'K7M2P4QX9R' -> 'K7M2-P4QX-9R', which is how the device shows it."""
+    c = normalize_code(code)
+    return "-".join(filter(None, (c[0:4], c[4:8], c[8:12])))
 
 
 def is_valid_code(code: str) -> bool:

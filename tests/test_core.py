@@ -35,6 +35,26 @@ def test_code_normalisation():
     assert not pairing.is_valid_code("K7M2P4QX9O")     # O is not in the alphabet
     assert not pairing.is_valid_code("K7M2P4QX90")     # nor is 0
 
+def test_new_code_is_valid_and_shown_like_the_device_shows_it():
+    codes = {pairing.new_code() for _ in range(200)}
+    # 32^10 possibilities: a repeat in 200 draws would mean the RNG is broken.
+    assert len(codes) == 200
+    for c in codes:
+        assert pairing.is_valid_code(c)
+        assert pairing.normalize_code(pairing.format_code(c)) == c
+    assert pairing.format_code("K7M2P4QX9R") == "K7M2-P4QX-9R"   # as the screen groups it
+    assert pairing.format_code("k7m2-p4qx-9r") == "K7M2-P4QX-9R"
+    # A made-up code derives like any other, so it meets the agent on the relay.
+    assert pairing.derive("K7M2P4QX9R")[0] == "4b907ba136d0a7f2"
+
+def test_links_are_https_and_the_card_editor_lists_the_same_ones():
+    assert set(const.LINKS) == {"github_profile", "repo_main", "repo_ha", "discord"}
+    assert const.LINKS["github_profile"] == "https://github.com/rhshourav"
+    card = (PKG / "frontend" / "peekesp-card.js").read_text()
+    for name, url in const.LINKS.items():
+        assert url.startswith("https://"), name
+        assert f'"{url}"' in card, f"the card editor does not link {name}"
+
 def test_parse_multi_device_and_sentinels():
     machines, fw = api.parse_payload({
         "latest_fw": "1.3.0",

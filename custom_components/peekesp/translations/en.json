@@ -6,7 +6,9 @@
         "description": "How should Home Assistant find your machines?",
         "menu_options": {
           "pair": "Use the pairing code from the device",
-          "manual": "Enter a relay URL and token"
+          "generate": "Get a new pairing code",
+          "manual": "Enter a relay URL and token",
+          "links": "GitHub, repositories and Discord"
         }
       },
       "pair": {
@@ -15,10 +17,24 @@
         "data": { "code": "Pairing code", "relay_base": "Relay address" },
         "data_description": { "relay_base": "Leave as is unless you deployed your own Worker." }
       },
+      "generate": {
+        "title": "Your pairing code",
+        "description": "Home Assistant made this code for you:\n\n## `{code}`\n\nGive it to whatever sends your readings: in the PeekESP Windows app that is **Settings, Pair a device**, and the PeekESP app on your phone asks for it too. Submit to start listening on it. Machines appear once an agent has pushed to this code.\n\nThe ESP32 display makes a code of its own. To point it at this one instead, open **Configure** on the integration afterwards: the pairing code page shows the Worker URL and read token for the device's setup page.\n\nThe code stays the same while this page is open, so you can copy it first. Treat it like a password: anyone who has it can read your readings.",
+        "data": { "relay_base": "Relay address", "regenerate": "Show a different code" },
+        "data_description": {
+          "relay_base": "Leave as is unless you deployed your own Worker.",
+          "regenerate": "Tick and submit to get another code instead of using this one."
+        }
+      },
       "manual": {
         "title": "Custom relay",
         "description": "For a named or private stream.",
         "data": { "url": "Worker URL", "token": "Read token" }
+      },
+      "links": {
+        "title": "PeekESP on the web",
+        "description": "- [rhshourav on GitHub]({github_profile})\n- [PeekESP repository]({repo_main}): firmware, agents, relay and the Android app\n- [Home Assistant integration repository]({repo_ha}): issues and releases for this integration\n- [Join the PeekESP Discord community]({discord})",
+        "menu_options": { "user": "Back" }
       },
       "reauth_confirm": {
         "title": "The relay rejected the saved credentials",
@@ -34,13 +50,25 @@
     },
     "abort": {
       "already_configured": "This stream is already set up.",
-      "reauth_successful": "Reconnected."
+      "reauth_successful": "Reconnected.",
+      "invalid_code": "That is not a valid code. It is 10 characters: letters A-Z without I and O, and digits 2-9.",
+      "invalid_url": "The address must start with https://",
+      "invalid_auth": "The relay did not accept that code or token.",
+      "cannot_connect": "Could not reach the relay."
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "PeekESP options",
+        "menu_options": {
+          "settings": "Poll interval and offline timeout",
+          "pairing_code": "Pairing code",
+          "links": "GitHub, repositories and Discord"
+        }
+      },
+      "settings": {
+        "title": "Settings",
         "data": {
           "scan_interval": "Poll interval (seconds)",
           "offline_after": "Mark a machine offline after (seconds)"
@@ -49,6 +77,144 @@
           "scan_interval": "The device polls the same relay every 5 s. Each poll counts against your Worker's request quota.",
           "offline_after": "Counted from the host's last push, as reported by the relay."
         }
+      },
+      "links": {
+        "title": "PeekESP on the web",
+        "description": "- [rhshourav on GitHub]({github_profile})\n- [PeekESP repository]({repo_main}): firmware, agents, relay and the Android app\n- [Home Assistant integration repository]({repo_ha}): issues and releases for this integration\n- [Join the PeekESP Discord community]({discord})",
+        "menu_options": { "init": "Back" }
+      },
+      "pairing_code": {
+        "title": "Pairing code",
+        "description": "## `{code}`\n\nEnter this in the PeekESP Windows app (**Settings, Pair a device**) or the PeekESP app on your phone.\n\nThe ESP32 display makes its own code. To point it at this stream instead, open its setup page (hold the left button) and fill in **Relay**:\n\n- Worker URL: `{worker_url}`\n- Read token: `{read_token}`\n\nTreat all of this like a password: anyone who has the code can read your readings. Do not post it in issues or on Discord.",
+        "menu_options": { "rotate_code": "Make a new code", "init": "Back" }
+      },
+      "pairing_unknown": {
+        "title": "Pairing code",
+        "description": "Home Assistant does not know this entry's code. It was typed in, and only a read token derived from it was kept, which cannot be turned back into the code. The code is on the device's screen, or in your agent's settings.\n\nFor the ESP32's setup page (**Relay**):\n\n- Worker URL: `{worker_url}`\n- Read token: `{read_token}`\n\nIf you would rather have a code Home Assistant can show, make a new one. Every agent and display using the current code will need the new one.",
+        "menu_options": { "rotate_code": "Make a new code", "init": "Back" }
+      },
+      "rotate_code": {
+        "title": "Make a new pairing code",
+        "description": "New code:\n\n## `{code}`\n\nSubmitting switches this entry to it. **Every agent, app and display using the old code stops reaching this stream** until you enter the new code in each of them. Nothing changes until you submit.",
+        "data": { "regenerate": "Show a different code" },
+        "data_description": {
+          "regenerate": "Tick and submit to get another code instead of using this one."
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The relay did not accept that code.",
+      "cannot_connect": "Could not reach the relay. Check your internet connection."
+    }
+  },
+  "exceptions": {
+    "unknown_entry": { "message": "There is no PeekESP entry with the id {entry_id}." },
+    "entry_not_loaded": { "message": "{title} is not loaded." },
+    "no_entries": { "message": "PeekESP is not set up yet." },
+    "multiple_entries": {
+      "message": "There is more than one PeekESP entry. Say which one with config_entry_id."
+    },
+    "no_code_stored": {
+      "message": "{title} was set up with a code that was typed in, and Home Assistant keeps only a read token derived from it, so it cannot show the code. Look on the device's screen or in the agent's settings, or use peekesp.rotate_pairing_code to switch to a new code."
+    },
+    "not_paired": {
+      "message": "{title} uses a custom relay (a URL and token), which has no pairing code."
+    },
+    "invalid_code": {
+      "message": "That is not a valid code. It is 10 characters: letters A-Z without I and O, and digits 2-9."
+    },
+    "invalid_url": { "message": "The address must start with https://" },
+    "already_configured": { "message": "This stream is already set up." },
+    "invalid_auth": { "message": "The relay did not accept that code or token." },
+    "cannot_connect": { "message": "Could not reach the relay." }
+  },
+  "services": {
+    "generate_pairing_code": {
+      "name": "Generate pairing code",
+      "description": "Makes a fresh random pairing code and returns it. Nothing is saved or changed. Give the code to an agent, then add it with Pair."
+    },
+    "get_pairing_code": {
+      "name": "Get pairing code",
+      "description": "Returns the pairing code Home Assistant generated for an entry. Not available for entries whose code was typed in. Administrators only, because the code is a credential.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Entry",
+          "description": "Which PeekESP entry. Leave empty if there is only one."
+        }
+      }
+    },
+    "rotate_pairing_code": {
+      "name": "Rotate pairing code",
+      "description": "Switches an entry to a new generated code and returns it. Agents, the app and the display using the old code stop reaching this stream until they are given the new one.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Entry",
+          "description": "Which PeekESP entry. Leave empty if there is only one."
+        }
+      }
+    },
+    "get_links": {
+      "name": "Get project links",
+      "description": "Returns the links to rhshourav on GitHub, the PeekESP repositories and the Discord community, and can show them in a notification.",
+      "fields": {
+        "notify": {
+          "name": "Show in a notification",
+          "description": "Also post the links as a notification, where they can be clicked."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Refresh now",
+      "description": "Polls the relay now instead of waiting for the next poll. Held back to one poll per 10 seconds, as the Refresh now button is.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Entry",
+          "description": "Which PeekESP entry. Leave empty to refresh all of them."
+        }
+      }
+    },
+    "set_options": {
+      "name": "Set options",
+      "description": "Changes the poll interval and the offline timeout, as the options dialog does. The entry reloads.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Entry",
+          "description": "Which PeekESP entry. Leave empty to change all of them."
+        },
+        "scan_interval": {
+          "name": "Poll interval",
+          "description": "Seconds between polls of the relay, 5 to 600."
+        },
+        "offline_after": {
+          "name": "Offline after",
+          "description": "Seconds without a push before a machine counts as offline, 10 to 3600."
+        }
+      }
+    },
+    "pair": {
+      "name": "Pair with a code",
+      "description": "Adds an entry from a pairing code, as the setup dialog does. Dashes and case are ignored. Administrators only.",
+      "fields": {
+        "code": {
+          "name": "Pairing code",
+          "description": "The 10-character code from the device, the agent or Generate pairing code."
+        },
+        "relay_base": {
+          "name": "Relay address",
+          "description": "Leave as is unless you deployed your own Worker."
+        },
+        "store_code": {
+          "name": "Keep the code",
+          "description": "Store the code in Home Assistant so Get pairing code can show it later. Off by default: the code can push readings and send commands, and the read token Home Assistant needs cannot."
+        }
+      }
+    },
+    "add_custom_relay": {
+      "name": "Add custom relay",
+      "description": "Adds an entry from a Worker URL and read token, for a named or private stream. Administrators only.",
+      "fields": {
+        "url": { "name": "Worker URL", "description": "The https:// address of the stream." },
+        "token": { "name": "Read token", "description": "The stream's read token." }
       }
     }
   }

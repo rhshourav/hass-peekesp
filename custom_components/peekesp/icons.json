@@ -1,0 +1,12 @@
+{
+  "services": {
+    "generate_pairing_code": { "service": "mdi:key-plus" },
+    "get_pairing_code": { "service": "mdi:key-variant" },
+    "rotate_pairing_code": { "service": "mdi:key-change" },
+    "get_links": { "service": "mdi:link-variant" },
+    "refresh": { "service": "mdi:refresh" },
+    "set_options": { "service": "mdi:cog" },
+    "pair": { "service": "mdi:link-plus" },
+    "add_custom_relay": { "service": "mdi:server-plus" }
+  }
+}

@@ -12,7 +12,7 @@
  *   entity: sensor.dietpi_screen
  *   name: optional label shown after "//"
  */
-const VERSION = "0.1.1";
+const VERSION = "0.2.0";
 
 const C = {
   bg: "#05070E", panel: "#0B1220", track: "#1A2334",
@@ -345,6 +345,14 @@ class PeekESPCard extends HTMLElement {
   }
 }
 
+// Kept in step with LINKS in const.py (tests/test_core.py checks that they are).
+const LINKS = [
+  ["rhshourav on GitHub", "https://github.com/rhshourav"],
+  ["PeekESP repository", "https://github.com/rhshourav/PeekESP"],
+  ["Integration repository", "https://github.com/rhshourav/hass-peekesp"],
+  ["Discord", "https://discord.gg/nHtHMmjzRU"],
+];
+
 class PeekESPCardEditor extends HTMLElement {
   setConfig(config) { this._config = config; this._render(); }
   set hass(h) { this._hass = h; if (this._form) this._form.hass = h; }
@@ -355,6 +363,21 @@ class PeekESPCardEditor extends HTMLElement {
       this._form.addEventListener("value-changed", (e) =>
         this.dispatchEvent(new CustomEvent("config-changed", { bubbles: true, composed: true, detail: { config: e.detail.value } })));
       this.appendChild(this._form);
+
+      // Where to go for help or the source, in the one place a dashboard author
+      // is already looking. Built from nodes, and the addresses are constants.
+      const foot = document.createElement("p");
+      foot.className = "peekesp-links";
+      foot.style.cssText = "margin:12px 0 0;font-size:13px;color:var(--secondary-text-color)";
+      foot.append("Help and source: ");
+      LINKS.forEach(([label, href], i) => {
+        if (i) foot.append(" · ");
+        const a = document.createElement("a");
+        a.href = href; a.textContent = label; a.target = "_blank"; a.rel = "noopener noreferrer";
+        a.style.color = "var(--primary-color)";
+        foot.append(a);
+      });
+      this.appendChild(foot);
     }
     this._form.hass = this._hass;
     this._form.data = this._config;

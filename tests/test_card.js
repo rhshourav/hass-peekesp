@@ -46,6 +46,18 @@ evil.disconnectedCallback();
 let got = null; card.addEventListener("hass-more-info", e => (got = e.detail.entityId));
 card.shadowRoot.querySelector(".bezel").click(); assert.equal(got, "sensor.dietpi_screen");
 
+// the editor carries the project links, as real anchors that open in a new tab
+const editor = w.document.createElement("peekesp-card-editor"); w.document.body.appendChild(editor);
+editor.setConfig({ entity: "sensor.dietpi_screen" });
+editor.setConfig({ entity: "sensor.dietpi_screen", name: "Pi" });   // re-render must not add a second row
+const anchors = [...editor.querySelectorAll(".peekesp-links a")];
+assert.equal(editor.querySelectorAll(".peekesp-links").length, 1);
+assert.deepEqual(anchors.map(a => a.href), [
+  "https://github.com/rhshourav", "https://github.com/rhshourav/PeekESP",
+  "https://github.com/rhshourav/hass-peekesp", "https://discord.gg/nHtHMmjzRU",
+]);
+assert(anchors.every(a => a.target === "_blank" && /noopener/.test(a.rel)));
+
 // stub config finds a PeekESP entity
 const C = w.customElements.get("peekesp-card");
 assert.equal(C.getStubConfig({ states: { "sensor.x": { attributes: {} }, "sensor.y": { attributes: { peekesp: true } } } }).entity, "sensor.y");
